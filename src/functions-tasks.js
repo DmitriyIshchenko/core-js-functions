@@ -72,7 +72,7 @@ function getArgumentsCount(funcs) {
  */
 function getPowerFunction(exponent) {
   const exp = exponent;
-  return (value) => Math.pow(value, exp);
+  return (value) => value ** exp;
 }
 
 /**
@@ -89,12 +89,12 @@ function getPowerFunction(exponent) {
  *   getPolynom()      => null
  */
 function getPolynom(...args) {
-  return function (x) {
+  return function polynom(x) {
     if (!args.length) return null;
 
     return [...args]
       .reverse()
-      .map((coef, index) => Math.pow(x, index) * coef)
+      .map((coef, index) => x ** index * coef)
       .reduce((acc, cur) => acc + cur, 0);
   };
 }
@@ -135,12 +135,12 @@ function memoize(func) {
  */
 function retry(func, attempts) {
   let repeats = 0;
-  return function () {
+  return function retryer() {
     while (repeats < attempts) {
       try {
         repeats = func();
       } catch {
-        repeats++;
+        repeats += 1;
       }
     }
     return repeats;
@@ -171,7 +171,7 @@ function retry(func, attempts) {
  *
  */
 function logger(func, logFunc) {
-  return function (...args) {
+  return function log(...args) {
     const formattedArgs = JSON.stringify(args).slice(1, -1);
 
     logFunc(`${func.name}(${formattedArgs}) starts`);
@@ -194,7 +194,7 @@ function logger(func, logFunc) {
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
 function partialUsingArguments(fn, ...args1) {
-  return function (...args2) {
+  return function partial(...args2) {
     return fn(...args1, ...args2);
   };
 }
@@ -217,7 +217,11 @@ function partialUsingArguments(fn, ...args1) {
  */
 function getIdGeneratorFunction(startFrom) {
   let id = startFrom;
-  return () => id++;
+  return () => {
+    const newId = id;
+    id += 1;
+    return newId;
+  };
 }
 module.exports = {
   getCurrentFunctionName,
